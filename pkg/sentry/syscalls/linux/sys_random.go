@@ -65,9 +65,7 @@ func GetRandom(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.Sys
 	if min > 256 {
 		min = 256
 	}
-	n, err := t.MemoryManager().CopyOutFrom(t, hostarch.AddrRangeSeqOf(ar), safemem.FromIOReader{&randReader{-1, min}}, usermem.IOOpts{
-		AddressSpaceActive: true,
-	})
+	n, err := t.MemoryManager().CopyOutFrom(t, hostarch.AddrRangeSeqOf(ar), safemem.FromIOReader{&randReader{-1, min}}, usermem.IOOpts{})
 	if n >= int64(min) {
 		return uintptr(n), nil, nil
 	}

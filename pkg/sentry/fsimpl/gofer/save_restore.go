@@ -204,9 +204,9 @@ func (fs *filesystem) CompleteRestore(ctx context.Context, opts vfs.CompleteRest
 		}
 
 		// Restore the filesystem root.
-		ctx.UninterruptibleSleepStart(false)
+		ctx.UninterruptibleSleepStart()
 		attached, err := fs.client.Attach(fs.opts.aname)
-		ctx.UninterruptibleSleepFinish(false)
+		ctx.UninterruptibleSleepFinish()
 		if err != nil {
 			return err
 		}

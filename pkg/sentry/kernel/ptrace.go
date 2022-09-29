@@ -1061,13 +1061,9 @@ func (t *Task) Ptrace(req int64, pid ThreadID, addr, data hostarch.Addr) error {
 	// may not yet have reached Task.doStop; wait for it to do so. This is safe
 	// because there's no way for target to initiate a ptrace-stop and then
 	// block (by calling Task.block) before entering it.
-	//
-	// Caveat: If tasks were just restored, the tracee's first call to
-	// Task.Activate (in Task.run) occurs before its first call to Task.doStop,
-	// which may block if the tracer's address space is active.
-	t.UninterruptibleSleepStart(true)
+	t.UninterruptibleSleepStart()
 	target.waitGoroutineStoppedOrExited()
-	t.UninterruptibleSleepFinish(true)
+	t.UninterruptibleSleepFinish()
 
 	// Resuming commands end the ptrace stop, but only if successful.
 	// PTRACE_LISTEN ends the ptrace stop if trapNotifyPending is already set on the
@@ -1177,9 +1173,6 @@ func (t *Task) Ptrace(req int64, pid ThreadID, addr, data hostarch.Addr) error {
 			Ctx:  t,
 			IO:   t.MemoryManager(),
 			Addr: ar.Start,
-			Opts: usermem.IOOpts{
-				AddressSpaceActive: true,
-			},
 		}, int(ar.Length()), target.Kernel().FeatureSet())
 		if err != nil {
 			return err
@@ -1207,9 +1200,6 @@ func (t *Task) Ptrace(req int64, pid ThreadID, addr, data hostarch.Addr) error {
 			Ctx:  t,
 			IO:   mm,
 			Addr: ar.Start,
-			Opts: usermem.IOOpts{
-				AddressSpaceActive: true,
-			},
 		}, int(ar.Length()), target.Kernel().FeatureSet())
 		if err != nil {
 			return err

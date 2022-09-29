@@ -64,17 +64,12 @@ func ioctl(ctx context.Context, fd int, io usermem.IO, args arch.SyscallArgument
 		}
 		var buf [4]byte
 		hostarch.ByteOrder.PutUint32(buf[:], uint32(val))
-		_, err := io.CopyOut(ctx, args[2].Pointer(), buf[:], usermem.IOOpts{
-			AddressSpaceActive: true,
-		})
+		_, err := io.CopyOut(ctx, args[2].Pointer(), buf[:], usermem.IOOpts{})
 		return 0, err
 	case unix.SIOCGIFFLAGS:
 		cc := &usermem.IOCopyContext{
 			Ctx: ctx,
 			IO:  io,
-			Opts: usermem.IOOpts{
-				AddressSpaceActive: true,
-			},
 		}
 		var ifr linux.IFReq
 		if _, err := ifr.CopyIn(cc, args[2].Pointer()); err != nil {
@@ -89,9 +84,6 @@ func ioctl(ctx context.Context, fd int, io usermem.IO, args arch.SyscallArgument
 		cc := &usermem.IOCopyContext{
 			Ctx: ctx,
 			IO:  io,
-			Opts: usermem.IOOpts{
-				AddressSpaceActive: true,
-			},
 		}
 		var ifc linux.IFConf
 		if _, err := ifc.CopyIn(cc, args[2].Pointer()); err != nil {
@@ -121,9 +113,6 @@ func ioctl(ctx context.Context, fd int, io usermem.IO, args arch.SyscallArgument
 		cc := &usermem.IOCopyContext{
 			Ctx: ctx,
 			IO:  io,
-			Opts: usermem.IOOpts{
-				AddressSpaceActive: true,
-			},
 		}
 		var ifr linux.IFReq
 		if _, err := ifr.CopyIn(cc, args[2].Pointer()); err != nil {
@@ -191,9 +180,6 @@ func ioctl(ctx context.Context, fd int, io usermem.IO, args arch.SyscallArgument
 		cc := &usermem.IOCopyContext{
 			Ctx: ctx,
 			IO:  io,
-			Opts: usermem.IOOpts{
-				AddressSpaceActive: true,
-			},
 		}
 
 		var ifr linux.IFReq

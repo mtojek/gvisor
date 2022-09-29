@@ -339,10 +339,10 @@ func Root(ctx context.Context, dev string, filesystem fs.Filesystem, superBlockF
 	}
 
 	// Notify that we're about to call the Gofer and block.
-	ctx.UninterruptibleSleepStart(false)
+	ctx.UninterruptibleSleepStart()
 	// Send the Tattach request.
 	s.attach.file, err = s.client.Attach(s.aname)
-	ctx.UninterruptibleSleepFinish(false)
+	ctx.UninterruptibleSleepFinish()
 	if err != nil {
 		// Same as above.
 		s.DecRef(ctx)

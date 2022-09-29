@@ -190,6 +190,9 @@ func (c *context) Interrupt() {
 	c.interrupt.NotifyInterrupt()
 }
 
+// Relax implements platform.Context.Relax.
+func (c *context) Relax() {}
+
 // Release implements platform.Context.Release().
 func (c *context) Release() {}
 
@@ -251,9 +254,8 @@ func (*PTrace) MaxUserAddress() hostarch.Addr {
 }
 
 // NewAddressSpace returns a new subprocess.
-func (p *PTrace) NewAddressSpace(interface{}) (platform.AddressSpace, <-chan struct{}, error) {
-	as, err := newSubprocess(globalPool.master.createStub)
-	return as, nil, err
+func (p *PTrace) NewAddressSpace() (platform.AddressSpace, error) {
+	return newSubprocess(globalPool.master.createStub)
 }
 
 type constructor struct{}

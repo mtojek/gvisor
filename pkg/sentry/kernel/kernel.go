@@ -1342,6 +1342,8 @@ func (k *Kernel) Pause() {
 }
 
 // ReceiveTaskStates receives full states for all tasks.
+//
+// Precondition: The kernel must be paused.
 func (k *Kernel) ReceiveTaskStates() {
 	k.extMu.Lock()
 	k.tasks.PullFullState()

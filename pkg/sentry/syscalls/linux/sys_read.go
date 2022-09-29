@@ -62,9 +62,7 @@ func Read(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.SyscallC
 	}
 
 	// Get the destination of the read.
-	dst, err := t.SingleIOSequence(addr, si, usermem.IOOpts{
-		AddressSpaceActive: true,
-	})
+	dst, err := t.SingleIOSequence(addr, si, usermem.IOOpts{})
 	if err != nil {
 		return 0, nil, err
 	}
@@ -142,9 +140,7 @@ func Pread64(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.Sysca
 	}
 
 	// Get the destination of the read.
-	dst, err := t.SingleIOSequence(addr, si, usermem.IOOpts{
-		AddressSpaceActive: true,
-	})
+	dst, err := t.SingleIOSequence(addr, si, usermem.IOOpts{})
 	if err != nil {
 		return 0, nil, err
 	}
@@ -172,9 +168,7 @@ func Readv(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.Syscall
 	}
 
 	// Read the iovecs that specify the destination of the read.
-	dst, err := t.IovecsIOSequence(addr, iovcnt, usermem.IOOpts{
-		AddressSpaceActive: true,
-	})
+	dst, err := t.IovecsIOSequence(addr, iovcnt, usermem.IOOpts{})
 	if err != nil {
 		return 0, nil, err
 	}
@@ -213,9 +207,7 @@ func Preadv(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.Syscal
 	}
 
 	// Read the iovecs that specify the destination of the read.
-	dst, err := t.IovecsIOSequence(addr, iovcnt, usermem.IOOpts{
-		AddressSpaceActive: true,
-	})
+	dst, err := t.IovecsIOSequence(addr, iovcnt, usermem.IOOpts{})
 	if err != nil {
 		return 0, nil, err
 	}
@@ -269,9 +261,7 @@ func Preadv2(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.Sysca
 	}
 
 	// Read the iovecs that specify the destination of the read.
-	dst, err := t.IovecsIOSequence(addr, iovcnt, usermem.IOOpts{
-		AddressSpaceActive: true,
-	})
+	dst, err := t.IovecsIOSequence(addr, iovcnt, usermem.IOOpts{})
 	if err != nil {
 		return 0, nil, err
 	}

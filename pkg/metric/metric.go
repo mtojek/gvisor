@@ -1052,6 +1052,21 @@ func EmitMetricUpdate() {
 	}
 }
 
+// EmitMetricUpdateWithTimeout is equivalent to EmitMetricUpdate, but only
+// waits for timeout before returning. Metrics may be emitted after
+// EmitMetricUpdateWithTimeout returns.
+func EmitMetricUpdateWithTimeout(timeout time.Duration) {
+	ch := make(chan struct{})
+	go func() {
+		EmitMetricUpdate()
+		close(ch)
+	}()
+	select {
+	case <-ch:
+	case <-time.After(timeout):
+	}
+}
+
 // StartStage should be called when an initialization stage is started.
 // It returns a function that must be called to indicate that the stage ended.
 // Alternatively, future calls to StartStage will implicitly indicate that the

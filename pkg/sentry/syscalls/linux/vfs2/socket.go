@@ -801,9 +801,7 @@ func recvSingleMsg(t *kernel.Task, s socket.SocketVFS2, msgPtr hostarch.Addr, fl
 	if msg.IovLen > linux.UIO_MAXIOV {
 		return 0, linuxerr.EMSGSIZE
 	}
-	dst, err := t.IovecsIOSequence(hostarch.Addr(msg.Iov), int(msg.IovLen), usermem.IOOpts{
-		AddressSpaceActive: true,
-	})
+	dst, err := t.IovecsIOSequence(hostarch.Addr(msg.Iov), int(msg.IovLen), usermem.IOOpts{})
 	if err != nil {
 		return 0, err
 	}
@@ -905,9 +903,7 @@ func recvFrom(t *kernel.Task, fd int32, bufPtr hostarch.Addr, bufLen uint64, fla
 		flags |= linux.MSG_DONTWAIT
 	}
 
-	dst, err := t.SingleIOSequence(bufPtr, int(bufLen), usermem.IOOpts{
-		AddressSpaceActive: true,
-	})
+	dst, err := t.SingleIOSequence(bufPtr, int(bufLen), usermem.IOOpts{})
 	if err != nil {
 		return 0, err
 	}
@@ -1087,9 +1083,7 @@ func sendSingleMsg(t *kernel.Task, s socket.SocketVFS2, file *vfs.FileDescriptio
 	if msg.IovLen > linux.UIO_MAXIOV {
 		return 0, linuxerr.EMSGSIZE
 	}
-	src, err := t.IovecsIOSequence(hostarch.Addr(msg.Iov), int(msg.IovLen), usermem.IOOpts{
-		AddressSpaceActive: true,
-	})
+	src, err := t.IovecsIOSequence(hostarch.Addr(msg.Iov), int(msg.IovLen), usermem.IOOpts{})
 	if err != nil {
 		return 0, err
 	}
@@ -1154,9 +1148,7 @@ func sendTo(t *kernel.Task, fd int32, bufPtr hostarch.Addr, bufLen uint64, flags
 		}
 	}
 
-	src, err := t.SingleIOSequence(bufPtr, bl, usermem.IOOpts{
-		AddressSpaceActive: true,
-	})
+	src, err := t.SingleIOSequence(bufPtr, bl, usermem.IOOpts{})
 	if err != nil {
 		return 0, err
 	}

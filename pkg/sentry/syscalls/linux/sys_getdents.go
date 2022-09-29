@@ -74,9 +74,6 @@ func getdents(t *kernel.Task, fd int32, addr hostarch.Addr, size int, f func(*di
 		Ctx:  t,
 		IO:   t.MemoryManager(),
 		Addr: addr,
-		Opts: usermem.IOOpts{
-			AddressSpaceActive: true,
-		},
 	}
 
 	ds := newDirentSerializer(f, w, t.Arch(), size)

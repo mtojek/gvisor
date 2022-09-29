@@ -557,9 +557,9 @@ func (fs *filesystem) initClientLisa(ctx context.Context) (lisafs.Inode, error) 
 	}
 
 	var rootInode lisafs.Inode
-	ctx.UninterruptibleSleepStart(false)
+	ctx.UninterruptibleSleepStart()
 	fs.clientLisa, rootInode, err = lisafs.NewClient(sock)
-	ctx.UninterruptibleSleepFinish(false)
+	ctx.UninterruptibleSleepFinish()
 	if err != nil {
 		return lisafs.Inode{}, err
 	}
@@ -602,9 +602,9 @@ func (fs *filesystem) initClient(ctx context.Context) (*dentry, error) {
 	}
 
 	// Perform attach to obtain the filesystem root.
-	ctx.UninterruptibleSleepStart(false)
+	ctx.UninterruptibleSleepStart()
 	attached, err := fs.client.Attach(fs.opts.aname)
-	ctx.UninterruptibleSleepFinish(false)
+	ctx.UninterruptibleSleepFinish()
 	if err != nil {
 		return nil, err
 	}
@@ -672,9 +672,9 @@ func (fs *filesystem) dial(ctx context.Context) error {
 	}
 
 	// Perform version negotiation with the server.
-	ctx.UninterruptibleSleepStart(false)
+	ctx.UninterruptibleSleepStart()
 	client, err := p9.NewClient(conn, fs.opts.msize, fs.opts.version)
-	ctx.UninterruptibleSleepFinish(false)
+	ctx.UninterruptibleSleepFinish()
 	if err != nil {
 		conn.Close()
 		return err
@@ -2561,9 +2561,9 @@ func (d *dentry) syncRemoteFileLocked(ctx context.Context) error {
 	// filesystem implementations may not sync changes made through write
 	// handles otherwise.
 	if d.writeFD.RacyLoad() >= 0 {
-		ctx.UninterruptibleSleepStart(false)
+		ctx.UninterruptibleSleepStart()
 		err := unix.Fsync(int(d.writeFD.RacyLoad()))
-		ctx.UninterruptibleSleepFinish(false)
+		ctx.UninterruptibleSleepFinish()
 		return err
 	}
 	if d.fs.opts.lisaEnabled && d.writeFDLisa.Ok() {
@@ -2572,9 +2572,9 @@ func (d *dentry) syncRemoteFileLocked(ctx context.Context) error {
 		return d.writeFile.fsync(ctx)
 	}
 	if d.readFD.RacyLoad() >= 0 {
-		ctx.UninterruptibleSleepStart(false)
+		ctx.UninterruptibleSleepStart()
 		err := unix.Fsync(int(d.readFD.RacyLoad()))
-		ctx.UninterruptibleSleepFinish(false)
+		ctx.UninterruptibleSleepFinish()
 		return err
 	}
 	if d.fs.opts.lisaEnabled && d.readFDLisa.Ok() {

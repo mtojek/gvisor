@@ -46,9 +46,6 @@ func (t *Task) ptraceArch(target *Task, req int64, addr, data hostarch.Addr) err
 			Ctx:  t,
 			IO:   t.MemoryManager(),
 			Addr: data,
-			Opts: usermem.IOOpts{
-				AddressSpaceActive: true,
-			},
 		})
 		return err
 
@@ -58,9 +55,6 @@ func (t *Task) ptraceArch(target *Task, req int64, addr, data hostarch.Addr) err
 			Ctx:  t,
 			IO:   t.MemoryManager(),
 			Addr: data,
-			Opts: usermem.IOOpts{
-				AddressSpaceActive: true,
-			},
 		}, len(*s))
 		return err
 
@@ -69,9 +63,6 @@ func (t *Task) ptraceArch(target *Task, req int64, addr, data hostarch.Addr) err
 			Ctx:  t,
 			IO:   t.MemoryManager(),
 			Addr: data,
-			Opts: usermem.IOOpts{
-				AddressSpaceActive: true,
-			},
 		})
 		return err
 
@@ -81,9 +72,6 @@ func (t *Task) ptraceArch(target *Task, req int64, addr, data hostarch.Addr) err
 			Ctx:  t,
 			IO:   t.MemoryManager(),
 			Addr: data,
-			Opts: usermem.IOOpts{
-				AddressSpaceActive: true,
-			},
 		}, len(*s))
 		return err
 

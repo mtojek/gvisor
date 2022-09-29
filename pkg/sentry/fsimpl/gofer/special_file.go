@@ -430,9 +430,9 @@ func (fd *specialFileFD) sync(ctx context.Context, forFilesystemSync bool) error
 		// If we have a host FD, fsyncing it is likely to be faster than an fsync
 		// RPC.
 		if fd.handle.fd >= 0 {
-			ctx.UninterruptibleSleepStart(false)
+			ctx.UninterruptibleSleepStart()
 			err := unix.Fsync(int(fd.handle.fd))
-			ctx.UninterruptibleSleepFinish(false)
+			ctx.UninterruptibleSleepFinish()
 			return err
 		}
 		if fs := fd.filesystem(); fs.opts.lisaEnabled {

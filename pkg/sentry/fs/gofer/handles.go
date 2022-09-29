@@ -117,8 +117,8 @@ func (rw *handleReadWriter) ReadToBlocks(dsts safemem.BlockSeq) (uint64, error) 
 		r = &p9.ReadWriterFile{File: rw.h.File.file, Offset: uint64(rw.off)}
 	}
 
-	rw.ctx.UninterruptibleSleepStart(false)
-	defer rw.ctx.UninterruptibleSleepFinish(false)
+	rw.ctx.UninterruptibleSleepStart()
+	defer rw.ctx.UninterruptibleSleepFinish()
 	n, err := safemem.FromIOReader{r}.ReadToBlocks(dsts)
 	rw.off += int64(n)
 	return n, err
@@ -133,8 +133,8 @@ func (rw *handleReadWriter) WriteFromBlocks(srcs safemem.BlockSeq) (uint64, erro
 		w = &p9.ReadWriterFile{File: rw.h.File.file, Offset: uint64(rw.off)}
 	}
 
-	rw.ctx.UninterruptibleSleepStart(false)
-	defer rw.ctx.UninterruptibleSleepFinish(false)
+	rw.ctx.UninterruptibleSleepStart()
+	defer rw.ctx.UninterruptibleSleepFinish()
 	n, err := safemem.FromIOWriter{w}.WriteFromBlocks(srcs)
 	rw.off += int64(n)
 	return n, err

@@ -118,6 +118,9 @@ func (c *context) Interrupt() {
 	c.interrupt.NotifyInterrupt()
 }
 
+// Relax implements platform.Context.Relax.
+func (c *context) Relax() {}
+
 // Release implements platform.Context.Release().
 func (c *context) Release() {}
 
