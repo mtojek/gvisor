@@ -502,3 +502,35 @@ func (l *Lifecycle) SignalContainer(args *SignalContainerArgs, _ *struct{}) erro
 	defer l.Kernel.Unpause()
 	return l.Kernel.SendContainerSignal(args.ContainerID, &linux.SignalInfo{Signo: args.Signo})
 }
+
+// GetCPUUsage gets the per container CPU usage in multi-container mode.
+func (l *Lifecycle) GetCPUUsage(args *ContainerArgs, usage *string) error {
+	l.mu.Lock()
+	c, ok := l.containerMap[args.ContainerID]
+	if !ok {
+		l.mu.Unlock()
+		return fmt.Errorf("%v container not ok", args.ContainerID)
+	}
+	l.mu.Unlock()
+
+	l.Kernel.Pause()
+	defer l.Kernel.Unpause()
+	mns := l.MountNamespacesMap[c.containerID]
+	reg := l.Kernel.CgroupRegistry()
+
+	ctx := vfs.WithMountNamespace(l.Kernel.SupervisorContext(), mns)
+	ctx = vfs.WithRoot(ctx, mns.Root())
+
+	cg, err := reg.FindCgroup(ctx, kernel.CgroupControllerCPUAcct, "/")
+	if err != nil {
+		return fmt.Errorf("FindCgroup can't locate cgroup err: %#v", err)
+	}
+
+	val, err := cg.ReadControl(ctx, "cpuacct.usage")
+	if err != nil {
+		return fmt.Errorf("ReadControl can't read control values err: %#v", err)
+	}
+
+	*usage = val
+	return nil
+}
