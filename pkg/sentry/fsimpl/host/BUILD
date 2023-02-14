@@ -54,6 +54,7 @@ go_library(
         "//pkg/sentry/uniqueid",
         "//pkg/sentry/vfs",
         "//pkg/sync",
+        "//pkg/sync/locking",
         "//pkg/syserr",
         "//pkg/tcpip",
         "//pkg/unet",

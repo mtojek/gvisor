@@ -29,6 +29,7 @@ import (
 	"gvisor.dev/gvisor/pkg/sentry/kernel"
 	"gvisor.dev/gvisor/pkg/sentry/kernel/auth"
 	"gvisor.dev/gvisor/pkg/sentry/vfs"
+	"gvisor.dev/gvisor/pkg/sync/locking"
 )
 
 const (
@@ -70,6 +71,8 @@ func (FilesystemType) Name() string {
 // Release implements vfs.FilesystemType.Release.
 func (FilesystemType) Release(ctx context.Context) {}
 
+var lockClassGenerator = locking.NewLockClassGenerator("sysfs")
+
 // GetFilesystem implements vfs.FilesystemType.GetFilesystem.
 func (fsType FilesystemType) GetFilesystem(ctx context.Context, vfsObj *vfs.VirtualFilesystem, creds *auth.Credentials, source string, opts vfs.GetFilesystemOptions) (*vfs.Filesystem, *vfs.Dentry, error) {
 	devMinor, err := vfsObj.GetAnonBlockDevMinor()
@@ -91,6 +94,7 @@ func (fsType FilesystemType) GetFilesystem(ctx context.Context, vfsObj *vfs.Virt
 	fs := &filesystem{
 		devMinor: devMinor,
 	}
+	fs.Init(lockClassGenerator)
 	fs.MaxCachedDentries = maxCachedDentries
 	fs.VFSFilesystem().Init(vfsObj, &fsType, fs)
 
