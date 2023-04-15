@@ -219,7 +219,9 @@ func (ep *endpoint) Write(p tcpip.Payloader, opts tcpip.WriteOptions) (int64, tc
 
 	var remote tcpip.LinkAddress
 	if to := opts.To; to != nil {
-		remote = tcpip.LinkAddress(to.Addr)
+		// HACK: tcpip.Address is overloaded: just assume it's always
+		// ethernet here
+		remote = tcpip.LinkAddress(to.Addr.AsSlice()[:header.EthernetAddressSize])
 
 		if n := to.NIC; n != 0 {
 			nicID = n
@@ -451,7 +453,13 @@ func (ep *endpoint) HandlePacket(nicID tcpip.NICID, netProto tcpip.NetworkProtoc
 
 	if len(pkt.LinkHeader().Slice()) != 0 {
 		hdr := header.Ethernet(pkt.LinkHeader().Slice())
-		rcvdPkt.senderAddr.Addr = tcpip.Address(hdr.SourceAddress())
+		// HACK again
+		if len(hdr.SourceAddress()) != 6 {
+			panic("uh oh")
+		}
+		rcvdPkt.senderAddr.Addr = tcpip.AddrFrom16Slice(
+			append([]byte(hdr.SourceAddress()), []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}...),
+		)
 	}
 
 	// Raw packet endpoints include link-headers in received packets.
