@@ -114,17 +114,19 @@ func TestLoopbackAcceptAllInSubnetUDP(t *testing.T) {
 		Protocol:          header.IPv4ProtocolNumber,
 		AddressWithPrefix: utils.Ipv4Addr,
 	}
-	ipv4Bytes := []byte(ipv4ProtocolAddress.AddressWithPrefix.Address)
+	addrCopy := ipv4ProtocolAddress.AddressWithPrefix.Address
+	ipv4Bytes := addrCopy.AsSlice()
 	ipv4Bytes[len(ipv4Bytes)-1]++
-	otherIPv4Address := tcpip.Address(ipv4Bytes)
+	otherIPv4Address := tcpip.AddrFromSlice(ipv4Bytes)
 
 	ipv6ProtocolAddress := tcpip.ProtocolAddress{
 		Protocol:          header.IPv6ProtocolNumber,
 		AddressWithPrefix: utils.Ipv6Addr,
 	}
-	ipv6Bytes := []byte(utils.Ipv6Addr.Address)
+	addrCopy = utils.Ipv6Addr.Address
+	ipv6Bytes := addrCopy.AsSlice()
 	ipv6Bytes[len(ipv6Bytes)-1]++
-	otherIPv6Address := tcpip.Address(ipv6Bytes)
+	otherIPv6Address := tcpip.AddrFromSlice(ipv6Bytes)
 
 	tests := []struct {
 		name       string
@@ -283,9 +285,10 @@ func TestLoopbackSubnetLifetimeBoundToAddr(t *testing.T) {
 		Protocol:          ipv4.ProtocolNumber,
 		AddressWithPrefix: utils.Ipv4Addr,
 	}
-	addrBytes := []byte(utils.Ipv4Addr.Address)
+	addrCopy := utils.Ipv4Addr.Address
+	addrBytes := addrCopy.AsSlice()
 	addrBytes[len(addrBytes)-1]++
-	otherAddr := tcpip.Address(addrBytes)
+	otherAddr := tcpip.AddrFromSlice(addrBytes)
 
 	s := stack.New(stack.Options{
 		NetworkProtocols: []stack.NetworkProtocolFactory{ipv4.NewProtocol},
@@ -352,17 +355,19 @@ func TestLoopbackAcceptAllInSubnetTCP(t *testing.T) {
 		AddressWithPrefix: utils.Ipv4Addr,
 	}
 	ipv4ProtocolAddress.AddressWithPrefix.PrefixLen = 8
-	ipv4Bytes := []byte(ipv4ProtocolAddress.AddressWithPrefix.Address)
+	addrCopy := ipv4ProtocolAddress.AddressWithPrefix.Address
+	ipv4Bytes := addrCopy.AsSlice()
 	ipv4Bytes[len(ipv4Bytes)-1]++
-	otherIPv4Address := tcpip.Address(ipv4Bytes)
+	otherIPv4Address := tcpip.AddrFromSlice(ipv4Bytes)
 
 	ipv6ProtocolAddress := tcpip.ProtocolAddress{
 		Protocol:          header.IPv6ProtocolNumber,
 		AddressWithPrefix: utils.Ipv6Addr,
 	}
-	ipv6Bytes := []byte(utils.Ipv6Addr.Address)
+	addrCopy = utils.Ipv6Addr.Address
+	ipv6Bytes := addrCopy.AsSlice()
 	ipv6Bytes[len(ipv6Bytes)-1]++
-	otherIPv6Address := tcpip.Address(ipv6Bytes)
+	otherIPv6Address := tcpip.AddrFromSlice(ipv6Bytes)
 
 	tests := []struct {
 		name         string
