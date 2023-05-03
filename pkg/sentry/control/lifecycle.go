@@ -299,6 +299,8 @@ func (l *Lifecycle) StartContainer(args *StartContainerArgs, _ *uint32) error {
 		return err
 	}
 
+	tg.InitialiseCgroups()
+
 	c := &Container{
 		containerID: initArgs.ContainerID,
 		tg:          tg,

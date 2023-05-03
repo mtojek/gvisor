@@ -908,6 +908,9 @@ func (k *Kernel) CreateProcess(args CreateProcessArgs) (*ThreadGroup, ThreadID, 
 	}
 	t.traceExecEvent(image) // Simulate exec for tracing.
 
+	tg.parentTask = t.Parent()
+	tg.cgroupTask = t
+
 	// Success.
 	cu.Release()
 	tgid := k.tasks.Root.IDOfThreadGroup(tg)

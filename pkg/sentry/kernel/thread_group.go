@@ -250,6 +250,10 @@ type ThreadGroup struct {
 	// currently not used but is maintained for consistency.
 	// TODO(gvisor.dev/issue/1967)
 	oomScoreAdj atomicbitops.Int32
+
+	// cgroupTask is the task that is moved into an initial set of cgroups.
+	cgroupTask *Task
+	parentTask *Task
 }
 
 // NewThreadGroup returns a new, empty thread group in PID namespace pidns. The
@@ -270,6 +274,16 @@ func (k *Kernel) NewThreadGroup(pidns *PIDNamespace, sh *SignalHandlers, termina
 	tg.timers = make(map[linux.TimerID]*IntervalTimer)
 	tg.oldRSeqCritical.Store(&OldRSeqCriticalRegion{})
 	return tg
+}
+
+// InitialiseCgroups moves cgroupTask into an initial set of cgroups.
+// Precondition: cgroupTask isn't in any cgroups yet, cgroupTask.cgroups is empty.
+func (tg *ThreadGroup) InitialiseCgroups() {
+	tg.cgroupTask.mu.Lock()
+	defer tg.cgroupTask.mu.Unlock()
+	if tg.cgroupTask.cgroups == nil {
+		tg.cgroupTask.EnterInitialCgroups(tg.parentTask)
+	}
 }
 
 // saveOldRSeqCritical is invoked by stateify.
