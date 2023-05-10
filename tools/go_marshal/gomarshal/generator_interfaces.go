@@ -77,6 +77,9 @@ func (g *interfaceGenerator) recordUsedImport(i string) {
 }
 
 func (g *interfaceGenerator) recordPotentiallyNonPackedField(fieldName string) {
+	// HACK: Replace "field[idx]" with "field[0]" for
+	// g.areFieldsPackedExpression().
+	fieldName = strings.ReplaceAll(fieldName, "[idx]", "[0]")
 	g.as[fieldName] = struct{}{}
 }
 
