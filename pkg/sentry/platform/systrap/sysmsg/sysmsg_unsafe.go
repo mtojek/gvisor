@@ -27,7 +27,7 @@ import (
 )
 
 const maxFutexSleepSeconds = 60
-const interruptTimeoutSeconds = 5
+const interruptTimeoutSeconds = 1
 
 // SleepOnState makes the caller sleep on the Msg.State futex.
 func (m *Msg) SleepOnState(curState ThreadState, interruptor interrupt.Receiver) syscall.Errno {
@@ -59,8 +59,8 @@ func (m *Msg) SleepOnState(curState ThreadState, interruptor interrupt.Receiver)
 // SleepOnState makes the caller sleep on the ThreadContext.State futex.
 func (c *ThreadContext) SleepOnState(curState ContextState, interruptor interrupt.Receiver) syscall.Errno {
 	futexTimeout := unix.Timespec{
-		Sec:  maxFutexSleepSeconds,
-		Nsec: 0,
+		Sec:  0,
+		Nsec: 100 * 1000 * 1000,
 	}
 	sentInterruptOnce := false
 	errno := syscall.Errno(0)
