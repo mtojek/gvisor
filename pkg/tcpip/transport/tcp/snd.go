@@ -29,10 +29,10 @@ import (
 
 const (
 	// MinRTO is the minimum allowed value for the retransmit timeout.
-	MinRTO = 200 * time.Millisecond
+	MinRTO = 1 * time.Millisecond
 
 	// MaxRTO is the maximum allowed value for the retransmit timeout.
-	MaxRTO = 120 * time.Second
+	MaxRTO = 20 * time.Millisecond
 
 	// InitialCwnd is the initial congestion window.
 	InitialCwnd = 10
@@ -44,7 +44,7 @@ const (
 	// MaxRetries is the maximum number of probe retries sender does
 	// before timing out the connection.
 	// Linux default TCP_RETR2, net.ipv4.tcp_retries2.
-	MaxRetries = 15
+	MaxRetries = 30
 )
 
 // congestionControl is an interface that must be implemented by any supported
