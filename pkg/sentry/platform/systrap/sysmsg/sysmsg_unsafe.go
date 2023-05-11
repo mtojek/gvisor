@@ -60,7 +60,7 @@ func (m *Msg) SleepOnState(curState ThreadState, interruptor interrupt.Receiver)
 func (c *ThreadContext) SleepOnState(curState ContextState, interruptor interrupt.Receiver) syscall.Errno {
 	futexTimeout := unix.Timespec{
 		Sec:  0,
-		Nsec: 100 * 1000 * 1000,
+		Nsec: 10 * 1000 * 1000,
 	}
 	sentInterruptOnce := false
 	errno := syscall.Errno(0)

@@ -94,6 +94,7 @@ struct thread_context {
   uint32_t last_thread_id;
   uint32_t sentry_fast_path;
   uint32_t acked;
+  int64_t acked_ts;
   uint64_t tls;
   uint64_t debug;
 };
@@ -156,7 +157,10 @@ static void __panic(int err, long line) {
   // Normal user processes cannot map addresses lower than vm.mmap_min_addr
   // which is usually > 4K. So writing to an address <4K should crash the
   // process with a segfault.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
   *(int *)(line % 4096) = err;
+#pragma GCC diagnostic pop
 }
 
 void memcpy(uint8_t *dest, uint8_t *src, size_t n);

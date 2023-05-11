@@ -210,6 +210,7 @@ struct thread_context *queue_get_context(struct sysmsg *sysmsg) {
     }
     struct thread_context *ctx = thread_context_addr(context_id);
     sysmsg->context = ctx;
+    atomic_store(&ctx->acked_ts, rdtsc());
     atomic_store(&ctx->acked, 1);
     atomic_store(&ctx->thread_id, sysmsg->thread_id);
     return ctx;

@@ -786,6 +786,7 @@ func (s *subprocess) switchToApp(c *context, ac *arch.Context64) (isSyscall bool
 }
 
 func (s *subprocess) waitOnState(ctx *sharedContext, stubFastPathEnabled bool) {
+	ctx.interrupted = false
 	ctx.kicked = false
 	slowPath := false
 	start := cputicks()
@@ -806,6 +807,10 @@ func (s *subprocess) waitOnState(ctx *sharedContext, stubFastPathEnabled bool) {
 				}
 				s.kickSysmsgThread()
 				ctx.kicked = true
+				continue
+			}
+			if events&sharedContextInterrupt != 0 {
+				ctx.NotifyInterrupt()
 				continue
 			}
 			if events&sharedContextSlowPath != 0 {

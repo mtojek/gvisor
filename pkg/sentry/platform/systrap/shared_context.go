@@ -59,7 +59,8 @@ type sharedContext struct {
 	startWaitingTS int64
 	kicked         bool
 	// The task associated with the context fell asleep.
-	sleeping bool
+	sleeping    bool
+	interrupted bool
 }
 
 const (
@@ -72,6 +73,7 @@ const (
 	sharedContextSlowPath
 	// sharedContextDispatch indicates that a context go-routine has to start the wait loop.
 	sharedContextDispatch
+	sharedContextInterrupt
 )
 
 func (s *subprocess) getSharedContext() (*sharedContext, error) {
@@ -183,6 +185,10 @@ func (sc *sharedContext) isAcked() bool {
 	return atomic.LoadUint32(&sc.shared.Acked) != ackReset
 }
 
+func (sc *sharedContext) ackedTS() int64 {
+	return atomic.LoadInt64(&sc.shared.AckedTS)
+}
+
 func (sc *sharedContext) resetAcked() {
 	atomic.StoreUint32(&sc.shared.Acked, ackReset)
 }
@@ -284,8 +290,11 @@ func (q *fastPathDispatcher) deactivateSubprocess(s *subprocess) {
 //
 // The value is 40µs for 2GHz CPU. This timeout matches the sentry<->stub round
 // trip in the pure deep sleep case.
-const deepSleepTimeout = uint64(80000)
-const handshakeTimeout = uint64(1000)
+const (
+	deepSleepTimeout = uint64(80000)
+	handshakeTimeout = uint64(1000)
+	interruptTimeout = int64(20 * 1000 * 1000)
+)
 
 // loop is processing contexts in the queue. Only one instance of it can be
 // running, because it has exclusive access to the list.
@@ -325,7 +334,10 @@ func (q *fastPathDispatcher) loop(target *sharedContext) {
 
 			event := sharedContextReady
 			if ctx.state() == sysmsg.ContextStateNone {
-				if slowPath {
+				if !ctx.interrupted && ctx.isAcked() && (now-ctx.ackedTS()) > interruptTimeout {
+					event = sharedContextKicked
+					ctx.interrupted = true
+				} else if slowPath {
 					event = sharedContextSlowPath
 				} else if !ctx.kicked && uint64(now-ctx.startWaitingTS) > handshakeTimeout {
 					if ctx.isAcked() {

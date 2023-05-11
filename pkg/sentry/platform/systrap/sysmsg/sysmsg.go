@@ -252,7 +252,8 @@ type ThreadContext struct {
 	SentryFastPath uint32
 	// Acked is used by sysmsg threads to signal to the sentry that this context
 	// has been picked up from the context queue and is actively being worked on.
-	Acked uint32
+	Acked   uint32
+	AckedTS int64
 	// TLS is a pointer to a thread local storage.
 	// It is is only populated on ARM64.
 	TLS uint64
